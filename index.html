@@ -1,0 +1,220 @@
+﻿<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <title>Nhận diện khuôn mặt AI 🌸</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Mali:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Video Background chung cho tất cả các scenes -->
+    <video
+      id="globalBgVideo"
+      class="global-bg-video"
+      autoplay
+      loop
+      muted
+      playsinline
+      preload="auto"
+    >
+      <source src="images/background.mp4" type="video/mp4" />
+    </video>
+    <div class="global-bg-overlay"></div>
+    `n<audio id="bgAudio" src="images/audio.mp3" preload="auto" loop></audio>
+
+    <div id="flashOverlay"></div>
+
+    <!-- ══════════════════════════════════════
+     SCENE 1 — FAKE CAMERA SCANNER
+     ══════════════════════════════════════ -->
+    <div id="scene1" class="scene active">
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <div
+        id="noCamBg"
+        style="
+          display: none;
+          position: absolute;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 1;
+        "
+      ></div>
+      <div
+        id="noCamWave"
+        class="scan-overlay"
+        style="display: none; z-index: 2; pointer-events: none"
+      >
+        <div class="wave-bars">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+      <div class="scan-overlay" style="z-index: 3">
+        <div class="hud-frame">
+          <div class="scan-line"></div>
+          <div class="hud-corner tl"></div>
+          <div class="hud-corner tr"></div>
+          <div class="hud-corner bl"></div>
+          <div class="hud-corner br"></div>
+          <div class="hud-dot"></div>
+          <div class="hud-dot"></div>
+          <div class="hud-dot"></div>
+          <div class="hud-dot"></div>
+          <div class="reticle"></div>
+        </div>
+        <div class="terminal-log" id="terminalLog"></div>
+        <div class="scan-progress-wrap">
+          <div class="scan-progress-bar" id="progressBar"></div>
+        </div>
+        <div class="scan-status" id="scanStatus">INITIALIZING...</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCENE 2 — BÓ HOA + AVATAR
+     ══════════════════════════════════════ -->
+    <div id="scene2" class="scene">
+      <div class="stars-bg"></div>
+      <div class="bouquet-wrapper">
+        <div class="bouquet-container" id="bouquetContainer">
+          <img
+            src="images/bouquet.png"
+            alt="Bó hoa"
+            class="bouquet-img"
+            id="bouquetImg"
+            draggable="false"
+          />
+
+          <div class="girl-photo girl-pos-1" id="av1">
+            <img src="images/girl1.jpg" alt="" draggable="false" />
+          </div>
+          <div class="girl-photo girl-pos-2" id="av2">
+            <img src="images/girl2.jpg" alt="" draggable="false" />
+          </div>
+          <div class="girl-photo girl-pos-3" id="av3">
+            <img src="images/girl3.jpg" alt="" draggable="false" />
+          </div>
+          <div class="girl-photo girl-pos-4" id="av4">
+            <img src="images/girl4.jpg" alt="" draggable="false" />
+          </div>
+          <div class="girl-photo girl-pos-5" id="av5">
+            <img src="images/girl5.jpg" alt="" draggable="false" />
+          </div>
+          <div class="girl-photo girl-pos-6" id="av6">
+            <img src="images/girl6.jpg" alt="" draggable="false" />
+          </div>
+          <div class="girl-photo girl-pos-7" id="av7">
+            <img src="images/girl7.jpg" alt="" draggable="false" />
+          </div>
+          <svg class="hold-ring-svg" viewBox="0 0 100 100">
+            <circle class="hold-ring-bg" cx="50" cy="50" r="38" />
+            <circle
+              class="hold-ring-progress"
+              id="holdRingProgress"
+              cx="50"
+              cy="50"
+              r="38"
+            />
+          </svg>
+        </div>
+
+        <div class="hold-instruction" id="holdInstruction">
+          <span class="hold-text">Nhấn giữ bó hoa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCENE 3 — 3D UNIVERSE
+     ══════════════════════════════════════ -->
+    <div id="scene3" class="scene">
+      <div id="universe">
+        <canvas id="starCanvas"></canvas>
+        <div id="universeInner"></div>
+      </div>
+      <div id="envelopeBtn" onclick="goToScene4()" title="Mở thiệp bí mật">
+        💌
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCENE 4 — ENVELOPE OPEN
+     ══════════════════════════════════════ -->
+    <div id="scene4" class="scene">
+      <div class="s4-stars"></div>
+      <p class="s4-hint" id="s4Hint">Nhấn vào phong bì để mở 💌</p>
+
+      <div class="env-scene">
+        <!-- Phong bì -->
+        <div class="envelope" id="envelope" onclick="handleEnvelopeClick()">
+          <div class="env-body">
+            <div class="env-fold-l"></div>
+            <div class="env-fold-r"></div>
+            <div class="env-fold-b"></div>
+
+            <span class="env-flr ef-bl">🌸</span>
+            <span class="env-flr ef-br">🌹</span>
+
+            <div class="env-center">
+              <span class="env-to">Dành tặng các bông hồng K17 nhà ISE!</span>
+              <span class="env-heart">——— ♥ ———</span>
+              <span class="env-date-big">20/10</span>
+              <span class="env-sub"
+                >Đây là món quà nhỏ của mình, mn nhận nha!</span
+              >
+            </div>
+
+            <!-- Wax seal dùng hình ảnh seal.png -->
+            <div class="env-seal" id="envSeal">
+              <img src="images/seal.png" alt="Seal" draggable="false" />
+            </div>
+          </div>
+
+          <div class="env-flap" id="envFlap"></div>
+        </div>
+
+        <!-- Lá thư nằm đè hẳn lên trên phong bì -->
+        <div class="env-letter-wrap" id="envLetterWrap">
+          <div class="env-letter">
+            <span class="ltr-flr tl">🌸</span>
+            <span class="ltr-flr tr">🌺</span>
+            <span class="ltr-flr bl">🌸</span>
+            <span class="ltr-flr br">🌹</span>
+            <div class="ltr-inner">
+              <h2 class="ltr-title" id="ltrTitle">Gửi các bông hồng K17</h2>
+              <div class="ltr-div"></div>
+              <p class="ltr-date">💐 20 / 10 — Ngày Phụ Nữ Việt Nam</p>
+              <div class="ltr-div"></div>
+              <p class="ltr-body" id="ltrBody"></p>
+              <div class="ltr-photos"></div>
+              <p class="ltr-sig" id="ltrSig"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /env-scene -->
+
+      <button class="btn-back" onclick="goToScene3(true)">←</button>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCRIPTS
+     ══════════════════════════════════════ -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
